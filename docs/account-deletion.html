@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Delete Your Data</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #700000;
+            color: white;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+            text-align: center;
+        }
+        h1 {
+            margin-top: 0;
+        }
+        .container {
+            background-color: white;
+            color: #700000;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.2);
+            max-width: 400px;
+            width: 90%;
+        }
+        input[type="email"], input[type="password"], button {
+            width: calc(100% - 20px);
+            padding: 10px;
+            margin: 10px 0;
+            border: 1px solid #700000;
+            border-radius: 5px;
+            font-size: 16px;
+        }
+        button {
+            background-color: #700000;
+            color: white;
+            border: none;
+            cursor: pointer;
+        }
+        button:hover {
+            background-color: #700000;
+        }
+        footer {
+            margin-top: 20px;
+            font-size: 12px;
+            color: #ffffffcc;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Sad to See You Go</h1>
+        <p>Enter your email and password below to delete your account and all associated data.</p>
+        <form type="submit">
+            <input id="email" type="email" name="email" placeholder="Your Email" required>
+            <input id="password" type="password" name="password" placeholder="Your Password" required>
+            <button type="submit">Delete My Account</button>
+        </form>
+        <footer>
+            If you encounter any issues, please contact us at fearcast@gmail.com.
+        </footer>
+    </div>
+</body>
+<script src="./firebase-config.js"></script>
+<script type="module">
+    import { initializeApp } from 'https://www.gstatic.com/firebasejs/9.1.2/firebase-app.js';
+    import { getAuth, signInWithEmailAndPassword, deleteUser } from 'https://www.gstatic.com/firebasejs/9.1.2/firebase-auth.js';
+
+    const firebaseConfig = window.FEARCAST_FIREBASE_CONFIG;
+
+    if (!firebaseConfig) {
+        throw new Error('Missing firebase-config.js. Copy firebase-config.example.js to firebase-config.js and fill in your private values.');
+    }
+
+    const app = initializeApp(firebaseConfig);
+    const auth = getAuth(app);
+
+    document.querySelector('form').addEventListener('submit', async (e) => {
+        e.preventDefault();
+        const email = document.getElementById('email').value;
+        const password = document.getElementById('password').value;
+
+        try {
+            const userCredential = await signInWithEmailAndPassword(auth, email, password);
+            const user = userCredential.user;
+            await deleteUser(user);
+            alert('Account deleted successfully.');
+        } catch (error) {
+            alert(error.message);
+        }
+    });
+</script>
+</html>
